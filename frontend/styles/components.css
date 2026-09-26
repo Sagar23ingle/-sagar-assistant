@@ -1,0 +1,435 @@
+/* SIA Components & Interaction Design
+   Chat bubbles, context drawer, confirmation modals, action cards.
+*/
+
+/* ==================== CHAT STREAM ==================== */
+
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+  animation: message-fade-in 0.25s ease-out;
+}
+
+@keyframes message-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.assistant-wrapper {
+  align-self: flex-start;
+}
+
+.user-wrapper {
+  align-self: flex-end;
+}
+
+.message-sender {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.assistant-wrapper .message-sender {
+  color: var(--cyan);
+}
+
+.user-wrapper .message-sender {
+  color: var(--indigo);
+  text-align: right;
+}
+
+.message-bubble {
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.assistant-bubble {
+  background: rgba(10, 20, 36, 0.7);
+  border: 1px solid rgba(0, 217, 255, 0.16);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.user-bubble {
+  background: rgba(30, 42, 74, 0.65);
+  border: 1px solid rgba(97, 124, 255, 0.2);
+  color: var(--white);
+  border-bottom-right-radius: 4px;
+}
+
+/* ==================== ACTION RESULT CARDS ==================== */
+
+.action-card {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: rgba(14, 24, 44, 0.85);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.action-card.action-youtube {
+  border-color: rgba(255, 77, 109, 0.3);
+}
+
+.action-card.action-lead {
+  border-color: rgba(0, 217, 255, 0.3);
+}
+
+.action-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.action-card-title {
+  color: var(--cyan);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.action-card-body {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.lead-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.lead-pill {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(0, 217, 255, 0.1);
+  border: 1px solid rgba(0, 217, 255, 0.2);
+  color: var(--cyan);
+  font-size: 11px;
+}
+
+/* ==================== CONTEXT DRAWER ==================== */
+
+.context-drawer {
+  position: fixed;
+  top: 0;
+  right: -380px;
+  width: 360px;
+  height: 100vh;
+  background: rgba(10, 15, 28, 0.94);
+  border-left: 1px solid var(--border);
+  box-shadow: -10px 0 40px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  transition: right var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+}
+
+.context-drawer.open {
+  right: 0;
+}
+
+.drawer-header {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.drawer-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cyan);
+  letter-spacing: 0.5px;
+}
+
+.close-drawer-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.close-drawer-btn:hover {
+  color: var(--white);
+}
+
+.drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.drawer-section h4 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.text-btn {
+  background: transparent;
+  border: none;
+  color: var(--cyan);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.context-card {
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.tasks-list, .memories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-item-card, .memory-item-card {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  font-size: 12px;
+}
+
+.task-item-card.completed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.empty-state {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ==================== CONFIRMATION MODAL ==================== */
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 20px;
+}
+
+.confirmation-card {
+  background: var(--bg-1);
+  border: 1px solid var(--warning);
+  box-shadow: 0 0 30px rgba(255, 176, 32, 0.2);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 480px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.warning-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--warning);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(255, 176, 32, 0.1);
+  border: 1px solid rgba(255, 176, 32, 0.3);
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.confirm-details {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 8px;
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ==================== SETTINGS MODAL ==================== */
+
+.settings-card {
+  background: var(--bg-1);
+  border: 1px solid var(--border-bright);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.15);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-header, .settings-footer {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-footer {
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+  justify-content: flex-end;
+}
+
+.settings-body {
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.settings-group label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.form-select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-family);
+  font-size: 13px;
+  outline: none;
+}
+
+.form-select option {
+  background: var(--bg-1);
+  color: var(--text);
+}
+
+.radio-row, .checkbox-row {
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+}
+
+.slider-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.slider-row input[type="range"] {
+  accent-color: var(--cyan);
+}
+
+.muted-text {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* ==================== BUTTONS ==================== */
+
+.btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-family: var(--font-family);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background: var(--cyan);
+  color: var(--bg-0);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 16px var(--cyan-glow);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.btn-sm {
+  padding: 5px 12px;
+  font-size: 12px;
+}

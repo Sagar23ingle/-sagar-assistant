@@ -1,0 +1,30 @@
+# SIA Core Dependencies (Free & Local-First)
+
+# Web & API Server
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+websockets>=12.0
+pydantic>=2.6.0
+aiofiles>=23.2.1
+aiosqlite>=0.20.0
+httpx>=0.27.0
+beautifulsoup4>=4.12.0
+
+# Computer Control & Automation
+pyautogui>=0.9.54
+pygetwindow>=0.0.9
+pywin32>=306; sys_platform == 'win32'
+pillow>=10.2.0
+
+# Free / Local TTS Engines
+# edge-tts provides free, high-quality neural Indian English, Hindi, and Marathi voices (no API key required)
+edge-tts>=6.1.10
+# pyttsx3 provides 100% offline fallback using Windows SAPI5 voices
+pyttsx3>=2.90
+
+# Audio handling & Utilities
+numpy>=1.26.0
+
+# Testing
+pytest>=8.1.0
+pytest-asyncio>=0.23.0

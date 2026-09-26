@@ -1,0 +1,49 @@
+/* SIA Core Visualizer Styles
+   Houses the Canvas and glow effects for the living AI presence.
+*/
+
+.core-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+
+#siaCoreCanvas {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 24px rgba(0, 217, 255, 0.15));
+  transition: filter var(--transition-smooth);
+}
+
+.core-wrapper.state-idle #siaCoreCanvas {
+  filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.15));
+}
+
+.core-wrapper.state-listening #siaCoreCanvas {
+  filter: drop-shadow(0 0 35px rgba(0, 217, 255, 0.45));
+}
+
+.core-wrapper.state-thinking #siaCoreCanvas {
+  filter: drop-shadow(0 0 35px rgba(97, 124, 255, 0.45));
+}
+
+.core-wrapper.state-speaking #siaCoreCanvas {
+  filter: drop-shadow(0 0 40px rgba(0, 217, 255, 0.5));
+}
+
+.core-wrapper.state-working #siaCoreCanvas {
+  filter: drop-shadow(0 0 30px rgba(255, 176, 32, 0.35));
+}
+
+.core-wrapper.state-success #siaCoreCanvas {
+  filter: drop-shadow(0 0 35px rgba(0, 229, 138, 0.5));
+}
+
+.core-wrapper.state-error #siaCoreCanvas {
+  filter: drop-shadow(0 0 35px rgba(255, 77, 109, 0.5));
+}
