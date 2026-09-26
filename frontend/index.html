@@ -1,234 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIA — Sagar's Personal AI Assistant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/main.css">
-  <link rel="stylesheet" href="/styles/core.css">
-  <link rel="stylesheet" href="/styles/components.css">
-</head>
-<body class="theme-dark">
-  <div class="sia-app-container">
-
-    <!-- TOP ZONE: Status Bar & Controls -->
-    <header class="sia-header">
-      <div class="header-left">
-        <div class="sia-brand">
-          <span class="sia-logo-glow"></span>
-          <span class="sia-title">SIA</span>
-          <span class="sia-subtitle">v1.0 • LOCAL</span>
-        </div>
-        <div class="status-badge" id="systemStatusBadge">
-          <span class="status-dot"></span>
-          <span class="status-label" id="statusLabel">READY</span>
-        </div>
-      </div>
-
-      <div class="header-center">
-        <div class="active-project-pill" id="activeProjectPill" title="Active Project">
-          <span class="project-indicator"></span>
-          <span class="project-name">DineMotion Studios</span>
-        </div>
-      </div>
-
-      <div class="header-right">
-        <button class="nav-btn" id="btnAudioToggle" title="Voice Output Toggle">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77M16.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02M3 9v6h4l5 5V4L7 9H3z"/></svg>
-        </button>
-        <button class="nav-btn" id="btnTasks" title="Tasks & Reminders">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m-8 14l-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/></svg>
-          <span class="badge-count" id="taskCountBadge" style="display:none;">0</span>
-        </button>
-        <button class="nav-btn" id="btnLeads" title="DineMotion Prospects">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-        </button>
-        <button class="nav-btn" id="btnContext" title="Context & Memory">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
-        </button>
-        <button class="nav-btn" id="btnSettings" title="Settings">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-        </button>
-      </div>
-    </header>
-
-    <!-- CENTER ZONE: SIA Core (Audio-reactive Canvas Visualizer) -->
-    <main class="sia-main-zone">
-      <div class="core-wrapper">
-        <canvas id="siaCoreCanvas" width="340" height="340"></canvas>
-        <div class="core-state-text" id="coreStatusText">Standing by for instructions, Sir.</div>
-        <div class="core-transcription-preview" id="liveTranscriptPreview" style="display: none;"></div>
-      </div>
-
-      <!-- MIDDLE ZONE: Conversation Stream -->
-      <section class="conversation-container" id="conversationStream">
-        <!-- Messages appended dynamically -->
-        <div class="message-wrapper assistant-wrapper">
-          <div class="message-sender">SIA</div>
-          <div class="message-bubble assistant-bubble">
-            Hello Sir. All local systems are online and responsive. I'm ready to help with DineMotion outreach, tasks, YouTube, or controlling your computer.
-          </div>
-        </div>
-      </section>
-
-      <!-- LOWER ZONE: Live Activity Notification Banner -->
-      <div class="activity-banner" id="activityBanner" style="display: none;">
-        <div class="activity-spinner"></div>
-        <div class="activity-text" id="activityBannerText">Performing action...</div>
-      </div>
-    </main>
-
-    <!-- BOTTOM ZONE: Unified Interaction Bar -->
-    <footer class="sia-footer">
-      <div class="interaction-bar">
-        <button class="voice-btn" id="btnVoiceInput" title="Toggle Voice (Space / Click)">
-          <div class="voice-ring"></div>
-          <svg class="icon-mic" viewBox="0 0 24 24"><path fill="currentColor" d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15c-.08-.49-.49-.85-.98-.85-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08c3.02-.43 5.42-2.78 5.91-5.78.1-.6-.39-1.14-1-1.14z"/></svg>
-        </button>
-
-        <input type="text" id="textInput" class="main-input" placeholder="Talk or type in English, Hindi, or Marathi..." autocomplete="off">
-
-        <button class="stop-btn" id="btnStopSpeech" title="Stop SIA Speaking" style="display: none;">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M6 6h12v12H6z"/></svg>
-        </button>
-
-        <button class="send-btn" id="btnSendText" title="Send (Enter)">
-          <svg class="icon" viewBox="0 0 24 24"><path fill="currentColor" d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        </button>
-      </div>
-
-      <div class="footer-hints">
-        <span>Press <b>Space</b> for Push-to-Talk</span>
-        <span>•</span>
-        <span>Say "<b>Hey Sia</b>"</span>
-        <span>•</span>
-        <span>Addresses you only as <b>Sir</b> or <b>Sagar</b></span>
-      </div>
-    </footer>
-
-    <!-- SLIDE-IN CONTEXT & MEMORY DRAWER -->
-    <aside class="context-drawer" id="contextDrawer">
-      <div class="drawer-header">
-        <h3 class="drawer-title">Active Context & Memory</h3>
-        <button class="close-drawer-btn" id="btnCloseDrawer">×</button>
-      </div>
-
-      <div class="drawer-content">
-        <div class="drawer-section">
-          <h4>Current Project</h4>
-          <div class="context-card project-card">
-            <div class="card-title">DineMotion Studios</div>
-            <div class="card-desc">Nagpur restaurant website revamp agency. Focus: modern menu & mobile reservation UX.</div>
-          </div>
-        </div>
-
-        <div class="drawer-section">
-          <div class="section-title-row">
-            <h4>Pending Tasks</h4>
-            <button class="text-btn" id="btnRefreshTasks">Refresh</button>
-          </div>
-          <div class="tasks-list" id="drawerTasksList">
-            <div class="empty-state">Loading tasks...</div>
-          </div>
-        </div>
-
-        <div class="drawer-section">
-          <div class="section-title-row">
-            <h4>Saved Long-Term Memories</h4>
-            <button class="text-btn" id="btnRefreshMemories">Refresh</button>
-          </div>
-          <div class="memories-list" id="drawerMemoriesList">
-            <div class="empty-state">Loading memories...</div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CONFIRMATION MODAL (Medium/High Risk Actions) -->
-    <div class="modal-backdrop" id="confirmationModal" style="display: none;">
-      <div class="confirmation-card">
-        <div class="confirm-header">
-          <span class="warning-badge" id="confirmRiskBadge">CONFIRMATION REQUIRED</span>
-          <h3 id="confirmTitle">Permission Request</h3>
-        </div>
-        <div class="confirm-body" id="confirmDescription">
-          SIA is requesting permission to execute an action.
-        </div>
-        <div class="confirm-details" id="confirmDetails">
-          <!-- Parameter keys/values -->
-        </div>
-        <div class="confirm-actions">
-          <button class="btn btn-secondary" id="btnRejectConfirm">Cancel / Deny</button>
-          <button class="btn btn-primary" id="btnApproveConfirm">Approve & Execute</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- SETTINGS MODAL -->
-    <div class="modal-backdrop" id="settingsModal" style="display: none;">
-      <div class="settings-card">
-        <div class="settings-header">
-          <h3>SIA Settings</h3>
-          <button class="close-drawer-btn" id="btnCloseSettings">×</button>
-        </div>
-        <div class="settings-body">
-          <div class="settings-group">
-            <label>Assistant Voice (Free Local Edge-TTS)</label>
-            <select id="settingVoiceLang" class="form-select">
-              <option value="auto">Auto-detect Language</option>
-              <option value="en">English (en-IN-NeerjaNeural)</option>
-              <option value="hi">Hindi (hi-IN-SwaraNeural)</option>
-              <option value="mr">Marathi (mr-IN-AarohiNeural)</option>
-            </select>
-            <button class="btn btn-secondary btn-sm" id="btnTestVoice" style="margin-top: 8px;">Test Voice Output</button>
-          </div>
-
-          <div class="settings-group">
-            <label>Addressing Preference</label>
-            <div class="radio-row">
-              <label><input type="radio" name="addressing" value="Sir" checked> "Sir"</label>
-              <label><input type="radio" name="addressing" value="Sagar"> "Sagar"</label>
-            </div>
-            <small class="muted-text">Nicknames like Bro, Boss, Dude, Bhai are strictly prohibited.</small>
-          </div>
-
-          <div class="settings-group">
-            <label>Personality Traits</label>
-            <div class="slider-row">
-              <span>Sarcasm / Wit</span>
-              <input type="range" id="settingSarcasm" min="0" max="1" step="0.1" value="0.4">
-            </div>
-            <div class="checkbox-row">
-              <label><input type="checkbox" id="settingProactive" checked> Proactive Accountability (Challenges bad ideas)</label>
-            </div>
-          </div>
-
-          <div class="settings-group">
-            <label>Privacy & Emergency Kill Switch</label>
-            <div class="checkbox-row">
-              <label><input type="checkbox" id="settingKillSwitch"> Emergency Stop / Block All Computer Control</label>
-            </div>
-            <button class="btn btn-secondary btn-sm" id="btnClearHistoryBtn" style="margin-top: 8px;">Clear Conversation History</button>
-          </div>
-        </div>
-        <div class="settings-footer">
-          <button class="btn btn-primary" id="btnSaveSettings">Save Preferences</button>
-        </div>
-      </div>
-    </div>
-
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SIA — Personal AI Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles/main.css"><link rel="stylesheet" href="/styles/core.css"><link rel="stylesheet" href="/styles/components.css">
+</head><body>
+<div class="app-shell">
+<header class="hud-topbar">
+  <div class="brand"><span class="brand-orb"></span><div><div class="brand-name" id="assistantName">SIA</div><div class="brand-sub">PERSONAL AI ASSISTANT</div></div></div>
+  <div class="status" id="systemStatusBadge"><span class="status-dot"></span><span id="statusLabel">READY</span></div>
+  <div class="top-actions"><button class="icon-btn" id="btnMemory" title="Memory">◈</button><button class="icon-btn" id="btnSettings" title="Settings">⚙</button></div>
+</header>
+<main class="main-stage">
+  <div class="ambient-grid"></div>
+  <section class="assistant-stage">
+    <div class="stage-caption"><span class="caption-dot"></span><span id="coreStatusText">Standing by</span></div>
+    <canvas id="assistantAvatarCanvas"></canvas>
+  </section>
+  <aside class="transcript-panel" id="transcriptPanel"></aside>
+</main>
+<footer class="interaction-zone">
+  <div class="command-bar">
+    <button class="mic-btn" id="btnVoiceInput" title="Voice input">⌁</button>
+    <input id="textInput" class="main-input" placeholder="Talk to your assistant…" autocomplete="off">
+    <button class="stop-btn" id="btnStopSpeech" title="Stop speaking" style="display:none">■</button>
+    <button class="send-btn" id="btnSendText" title="Send">➜</button>
   </div>
+  <div class="interaction-hint">Enter to send · Space for push-to-talk · “Hey Sia” to wake</div>
+</footer>
 
-  <audio id="siaAudioPlayer" style="display: none;"></audio>
+<aside class="drawer" id="memoryDrawer"><div class="drawer-head"><div><span class="drawer-kicker">LOCAL</span><h3>Memory & context</h3></div><button class="close-btn" id="btnCloseMemory">×</button></div><div id="drawerMemoriesList" class="drawer-list"></div><div class="drawer-section"><div class="section-row"><h4>Tasks</h4><button class="text-btn" id="btnRefreshTasks">Refresh</button></div><div id="drawerTasksList" class="drawer-list"></div></div></aside>
 
-  <!-- Application Scripts -->
-  <script src="/src/api-client.js"></script>
-  <script src="/src/core-visualizer.js"></script>
-  <script src="/src/voice-controller.js"></script>
-  <script src="/src/chat-manager.js"></script>
-  <script src="/src/app.js"></script>
-</body>
-</html>
+<div class="modal" id="confirmationModal" style="display:none"><div class="modal-card"><div class="modal-kicker" id="confirmRiskBadge">CONFIRMATION</div><h3>Permission required</h3><p id="confirmDescription"></p><pre id="confirmDetails"></pre><div class="modal-actions"><button class="secondary" id="btnRejectConfirm">Cancel</button><button class="primary" id="btnApproveConfirm">Approve & execute</button></div></div></div>
+
+<div class="modal" id="settingsModal" style="display:none"><div class="modal-card wide"><div class="drawer-head"><div><div class="drawer-kicker">SYSTEM</div><h3>Assistant settings</h3></div><button class="close-btn" id="btnCloseSettings">×</button></div>
+<div class="settings-grid">
+<div class="field"><label>Assistant name</label><input id="settingAssistantName"></div><div class="field"><label>Your name</label><input id="settingUserName"></div>
+<div class="field"><label>AI mode</label><select id="settingProvider"><option value="hybrid">Hybrid — Gemini + local Ollama</option><option value="gemini">Gemini first</option><option value="local">Local Ollama</option></select></div>
+<div class="field"><label>Reasoning model</label><input id="settingGeminiModel"></div>
+<div class="field"><label>Voice</label><select id="settingVoice"><option>Charon</option><option>Aoede</option><option>Leda</option><option>Achernar</option><option>Despina</option><option>Kore</option><option>Puck</option><option>Erinome</option><option>Callirrhoe</option><option>Vindemiatrix</option></select></div>
+<div class="field"><label>Gemini API key</label><input id="settingGeminiKey" type="password" placeholder="Stored only in local_secrets.json"></div>
+</div>
+<div class="quota-note"><b>Gemini Free Tier is limited, not unlimited.</b> Hybrid mode keeps SIA usable through your local Ollama model when cloud quota/rate limits are hit. Gemini Live/TTS also use quota. <span id="geminiStatusText">Checking key…</span></div>
+<div class="modal-actions"><button class="secondary" id="btnTestVoice">Test voice</button><button class="primary" id="btnSaveSettings">Save settings</button></div></div></div>
+
+<audio id="siaAudioPlayer"></audio>
+<script src="/src/api-client.js"></script><script src="/src/avatar-hud.js"></script><script src="/src/voice-controller.js"></script><script src="/src/chat-manager.js"></script><script src="/src/app.js"></script>
+</div></body></html>
