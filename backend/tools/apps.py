@@ -15,10 +15,10 @@ COMMON_APP_MAP = {
     "explorer": "explorer.exe",
     "file explorer": "explorer.exe",
     "files": "explorer.exe",
-    "chrome": "chrome.exe",
-    "google chrome": "chrome.exe",
-    "edge": "msedge.exe",
-    "browser": "msedge.exe",
+    "chrome": "chrome",
+    "google chrome": "chrome",
+    "edge": "msedge",
+    "browser": "msedge",
     "terminal": "wt.exe",
     "cmd": "cmd.exe",
     "command prompt": "cmd.exe",
@@ -28,9 +28,9 @@ COMMON_APP_MAP = {
     "paint": "mspaint.exe",
     "mspaint": "mspaint.exe",
     "settings": "ms-settings:",
-    "vscode": "code.cmd",
-    "vs code": "code.cmd",
-    "code": "code.cmd",
+    "vscode": "code",
+    "vs code": "code",
+    "code": "code",
 }
 
 
@@ -53,31 +53,55 @@ class AppsTool(BaseTool):
         if not app_name:
             return ToolResult(success=False, error="Application name is required.")
 
-        target = COMMON_APP_MAP.get(app_name, app_name)
+        candidates = []
+        if app_name in ["chrome", "google chrome"]:
+            candidates = [
+                os.path.expandvars(r"%ProgramFiles%\Google\Chrome\Application\chrome.exe"),
+                os.path.expandvars(r"%ProgramFiles(x86)%\Google\Chrome\Application\chrome.exe"),
+                os.path.expandvars(r"%LocalAppData%\Google\Chrome\Application\chrome.exe"),
+            ]
+        elif app_name in ["vscode", "vs code", "code"]:
+            candidates = [
+                os.path.expandvars(r"%LocalAppData%\Programs\Microsoft VS Code\Code.exe"),
+                os.path.expandvars(r"%ProgramFiles%\Microsoft VS Code\Code.exe"),
+            ]
+        elif app_name in ["edge", "browser"]:
+            candidates = [
+                os.path.expandvars(r"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"),
+                os.path.expandvars(r"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"),
+            ]
 
         try:
-            if target.startswith("ms-"):
-                os.startfile(target)
-            else:
-                subprocess.Popen(target, shell=True)
+            # 1. Try known explicit Windows installation paths
+            for path in candidates:
+                if os.path.exists(path):
+                    subprocess.Popen([path])
+                    return ToolResult(
+                        success=True,
+                        data={"app_name": app_name, "path": path},
+                        message=f"Sir, opened {app_name.capitalize()}.",
+                    )
 
-            return ToolResult(
-                success=True,
-                data={"app_name": app_name, "target": target},
-                message=f"Sir, opened {app_name.capitalize()}.",
-            )
-        except Exception as e:
-            # Fall back to startfile
-            try:
+            # 2. Try Windows protocol (e.g. ms-settings:)
+            target = COMMON_APP_MAP.get(app_name, app_name)
+            if target.startswith("ms-"):
                 os.startfile(target)
                 return ToolResult(
                     success=True,
                     data={"app_name": app_name, "target": target},
                     message=f"Sir, opened {app_name.capitalize()}.",
                 )
-            except Exception as e2:
-                return ToolResult(
-                    success=False,
-                    error=str(e2),
-                    message=f"Sir, I couldn't open '{app_name}'. Windows did not return a usable launch result.",
-                )
+
+            # 3. Use Windows shell 'start' command (consults Windows App Paths registry)
+            subprocess.Popen(f'start "" {target}', shell=True)
+            return ToolResult(
+                success=True,
+                data={"app_name": app_name, "target": target},
+                message=f"Sir, opened {app_name.capitalize()}.",
+            )
+        except Exception as e:
+            return ToolResult(
+                success=False,
+                error=str(e),
+                message=f"Sir, I couldn't open '{app_name}': {e}",
+            )

@@ -1,0 +1,15 @@
+import sqlite3
+
+conn = sqlite3.connect("data/sia.db")
+c = conn.cursor()
+c.execute("DELETE FROM memories WHERE key LIKE '%DineMotion%' OR value LIKE '%DineMotion%' OR value LIKE '%Nagpur%'")
+c.execute("DELETE FROM projects WHERE name LIKE '%DineMotion%' OR description LIKE '%DineMotion%' OR description LIKE '%Nagpur%'")
+c.execute("DELETE FROM tasks WHERE title LIKE '%Nagpur%' OR description LIKE '%Nagpur%'")
+c.execute("DELETE FROM leads WHERE location = 'Nagpur' OR pitch_angle LIKE '%DineMotion%' OR pitch_angle LIKE '%Nagpur%'")
+conn.commit()
+print("Cleaned database.")
+print("Remaining memories count:", c.execute("SELECT COUNT(*) FROM memories").fetchone()[0])
+print("Remaining projects count:", c.execute("SELECT COUNT(*) FROM projects").fetchone()[0])
+print("Remaining tasks count:", c.execute("SELECT COUNT(*) FROM tasks").fetchone()[0])
+print("Remaining leads count:", c.execute("SELECT COUNT(*) FROM leads").fetchone()[0])
+conn.close()

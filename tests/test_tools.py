@@ -15,6 +15,7 @@ def test_registered_tools():
     assert "memory.manage" in tool_names
     assert "research.search" in tool_names
     assert "email.manage" in tool_names
+    assert "business.manage" in tool_names
 
 
 @pytest.mark.asyncio
@@ -38,3 +39,16 @@ async def test_memory_tool_call():
     })
     assert result.success is True
     assert "test_pref" in result.message
+
+
+@pytest.mark.asyncio
+async def test_business_lead_discovery():
+    result = await registry.call_tool("business.manage", {
+        "action": "discover_leads",
+        "industry": "auto detailing",
+        "location": "Texas",
+        "country": "US",
+        "limit": 3
+    })
+    assert result.success is True
+    assert "discovered" in result.message.lower() or "leads" in result.data

@@ -14,9 +14,9 @@ SECRETS_FILE = CONFIG_DIR / "local_secrets.json"
 DEFAULTS: Dict[str, Any] = {
     "user": {"name": "Sagar", "allowed_addressing": ["Sir", "Sagar"], "default_addressing": "Sir", "preferred_language": "auto"},
     "assistant": {"name": "SIA", "gender": "female", "personality": {"sarcasm_level": 0.35, "playfulness": 0.5, "proactive_enabled": True, "verbosity": "natural", "honesty_level": "direct"}},
-    "voice": {"engine": "gemini", "gemini_voice": "Charon", "auto_speak_responses": True, "fallback_engine": "edge-tts"},
+    "voice": {"engine": "gemini", "gemini_voice": "Aoede", "auto_speak_responses": True, "fallback_engine": "edge-tts"},
     "speech_to_text": {"engine": "browser", "wake_word": "Hey Sia", "wake_word_enabled": True, "push_to_talk_key": "Space"},
-    "ai": {"provider": "hybrid", "gemini_model": "gemini-3.8-flash", "gemini_tts_model": "gemini-3.8-flash-tts", "gemini_voice": "Charon", "temperature": 0.65, "max_tool_steps": 8},
+    "ai": {"provider": "hybrid", "gemini_model": "gemini-3.5-flash-lite", "gemini_tts_model": "gemini-2.5-flash-preview-tts", "gemini_voice": "Aoede", "temperature": 0.65, "max_tool_steps": 8},
     "llm": {"provider": "ollama", "host": "http://127.0.0.1:11434", "model": "qwen2.5:3b", "temperature": 0.7, "context_window": 8192},
     "memory": {"db_path": "data/sia.db", "max_recent_messages": 20},
     "permissions": {

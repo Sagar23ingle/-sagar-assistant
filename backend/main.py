@@ -35,29 +35,109 @@ class MemoryCreateRequest(BaseModel): category:str="personal"; key:str; value:st
 class TTSRequest(BaseModel): text:str; language:Optional[str]=None
 class GeminiKeyRequest(BaseModel): api_key:str=""
 @app.post("/api/chat")
-async def chat(req:ChatRequest):
-    await broadcast("thinking",{"query":req.message})
-    result=await conversation_manager.process_user_input(req.message,req.session_id,req.generate_audio)
-    await broadcast(result.get("state","idle"),{"response":result.get("response_text","")})
-    return result
-@app.websocket("/ws")
-async def ws_endpoint(ws:WebSocket):
-    await ws.accept(); active_connections.append(ws)
+async def chat(req: ChatRequest):
+    async def on_state_change(st: str, details=None):
+        await broadcast(st, details)
+
+    await broadcast("processing", {"query": req.message})
     try:
-        await ws.send_json({"type":"welcome","state":"idle"})
+        result = await conversation_manager.process_user_input(
+            req.message,
+            req.session_id,
+            req.generate_audio,
+            state_callback=on_state_change
+        )
+    except Exception as e:
+        await broadcast("error", {"error": str(e)})
+        result = {
+            "response_text": "Sir, I encountered an issue processing your request.",
+            "audio_base64": None,
+            "mime_type": None,
+            "state": "idle",
+            "tool_result": None,
+            "requires_confirmation": False,
+            "confirmation_id": None
+        }
+    await broadcast(result.get("state", "idle"), {"response": result.get("response_text", "")})
+    return result
+
+
+@app.websocket("/ws")
+async def ws_endpoint(ws: WebSocket):
+    await ws.accept()
+    active_connections.append(ws)
+    try:
+        await ws.send_json({"type": "welcome", "state": "idle"})
         while True:
-            data=await ws.receive_json(); typ=data.get("type")
-            if typ=="user_message":
-                await broadcast("thinking",{"query":data.get("text","")})
-                result=await conversation_manager.process_user_input(data.get("text",""),data.get("session_id","default"),data.get("generate_audio",True))
-                await ws.send_json({"type":"sia_response","payload":result})
-                await broadcast(result.get("state","idle"))
-            elif typ=="interrupt": tts.stop(); await broadcast("idle",{"interrupted":True})
+            data = await ws.receive_json()
+            typ = data.get("type")
+            if typ == "user_message":
+                text = data.get("text", "")
+
+                async def on_token(token: str):
+                    try:
+                        await ws.send_json({"type": "stream_chunk", "chunk": token})
+                    except Exception:
+                        pass
+
+                async def on_state(state: str, details=None):
+                    try:
+                        await ws.send_json({"type": "state_change", "state": state, "details": details or {}})
+                    except Exception:
+                        pass
+                    await broadcast(state, details)
+
+                try:
+                    result = await conversation_manager.process_user_input(
+                        text,
+                        session_id=data.get("session_id", "default"),
+                        generate_audio=data.get("generate_audio", True),
+                        stream_callback=on_token,
+                        state_callback=on_state
+                    )
+                except Exception as err:
+                    result = {
+                        "response_text": "Sir, an error occurred while processing that message.",
+                        "audio_base64": None,
+                        "mime_type": None,
+                        "state": "idle",
+                        "tool_result": None,
+                        "requires_confirmation": False,
+                        "confirmation_id": None
+                    }
+                    await on_state("error", {"error": str(err)})
+
+                await ws.send_json({"type": "stream_end", "payload": result})
+                await ws.send_json({"type": "sia_response", "payload": result})
+                await broadcast(result.get("state", "idle"))
+            elif typ == "interrupt":
+                tts.stop()
+                await broadcast("idle", {"interrupted": True})
+            elif typ == "ping":
+                await ws.send_json({"type": "pong"})
     except WebSocketDisconnect:
-        if ws in active_connections: active_connections.remove(ws)
+        pass
+    except Exception:
+        pass
+    finally:
+        if ws in active_connections:
+            active_connections.remove(ws)
+
+
 @app.get("/api/status")
 async def status():
-    return {"status":"ready","assistant_name":get_setting("assistant","name",default="SIA"),"user_name":get_setting("user","name",default="Sagar"),"ai_provider":get_setting("ai","provider",default="hybrid"),"gemini_configured":bool(get_gemini_api_key()),"gemini_model":get_setting("ai","gemini_model",default="gemini-3.8-flash"),"voice_engine":get_setting("voice","engine",default="gemini"),"voice":get_setting("ai","gemini_voice",default="Charon"),"database":"online","active_clients":len(active_connections)}
+    return {
+        "status": "ready",
+        "assistant_name": get_setting("assistant", "name", default="SIA"),
+        "user_name": get_setting("user", "name", default="Sagar"),
+        "ai_provider": get_setting("ai", "provider", default="hybrid"),
+        "gemini_configured": bool(get_gemini_api_key()),
+        "gemini_model": get_setting("ai", "gemini_model", default="gemini-3.8-flash"),
+        "voice_engine": get_setting("voice", "engine", default="gemini"),
+        "voice": get_setting("ai", "gemini_voice", default="Aoede"),
+        "database": "online",
+        "active_clients": len(active_connections)
+    }
 @app.get("/api/settings")
 async def settings(): return load_settings()
 @app.post("/api/settings")

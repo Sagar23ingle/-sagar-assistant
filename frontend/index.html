@@ -1,50 +1,199 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SIA — Personal AI Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/styles/main.css"><link rel="stylesheet" href="/styles/core.css"><link rel="stylesheet" href="/styles/components.css">
-</head><body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SIA — Personal AI Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/core.css">
+  <link rel="stylesheet" href="/styles/components.css">
+</head>
+<body>
 <div class="app-shell">
-<header class="hud-topbar">
-  <div class="brand"><span class="brand-orb"></span><div><div class="brand-name" id="assistantName">SIA</div><div class="brand-sub">PERSONAL AI ASSISTANT</div></div></div>
-  <div class="status" id="systemStatusBadge"><span class="status-dot"></span><span id="statusLabel">READY</span></div>
-  <div class="top-actions"><button class="icon-btn" id="btnMemory" title="Memory">◈</button><button class="icon-btn" id="btnSettings" title="Settings">⚙</button></div>
-</header>
-<main class="main-stage">
-  <div class="ambient-grid"></div>
-  <section class="assistant-stage">
-    <div class="stage-caption"><span class="caption-dot"></span><span id="coreStatusText">Standing by</span></div>
-    <canvas id="assistantAvatarCanvas"></canvas>
-  </section>
-  <aside class="transcript-panel" id="transcriptPanel"></aside>
-</main>
-<footer class="interaction-zone">
-  <div class="command-bar">
-    <button class="mic-btn" id="btnVoiceInput" title="Voice input">⌁</button>
-    <input id="textInput" class="main-input" placeholder="Talk to your assistant…" autocomplete="off">
-    <button class="stop-btn" id="btnStopSpeech" title="Stop speaking" style="display:none">■</button>
-    <button class="send-btn" id="btnSendText" title="Send">➜</button>
+  <!-- Minimal Top Bar -->
+  <header class="hud-topbar">
+    <div class="brand">
+      <span class="brand-orb"></span>
+      <div>
+        <div class="brand-name" id="assistantName">SIA</div>
+        <div class="brand-sub">PERSONAL AI ASSISTANT</div>
+      </div>
+    </div>
+    <div class="status" id="systemStatusBadge">
+      <span class="status-dot"></span>
+      <span id="statusLabel">ONLINE</span>
+    </div>
+    <div class="top-actions">
+      <button class="icon-btn" id="btnDrawer" title="Memory, Tasks & Leads">◈</button>
+      <button class="icon-btn" id="btnSettings" title="Settings">⚙</button>
+    </div>
+  </header>
+
+  <!-- Central Living AI Stage -->
+  <main class="main-stage">
+    <div class="ambient-grid"></div>
+
+    <section class="assistant-stage">
+      <div class="stage-caption">
+        <span class="caption-dot"></span>
+        <span id="coreStatusText">Standing by</span>
+      </div>
+      <canvas id="assistantAvatarCanvas"></canvas>
+    </section>
+
+    <!-- Floating Minimal Transcript -->
+    <aside class="transcript-panel" id="transcriptPanel"></aside>
+  </main>
+
+  <!-- Bottom Command Bar -->
+  <footer class="interaction-zone">
+    <div class="command-bar">
+      <button class="mic-btn" id="btnVoiceInput" title="Voice input (Space for push-to-talk)">⌁</button>
+      <input id="textInput" class="main-input" placeholder="Talk to your assistant… (English, Hindi, Marathi, Hinglish)" autocomplete="off">
+      <button class="stop-btn" id="btnStopSpeech" title="Stop speaking" style="display:none">■</button>
+      <button class="send-btn" id="btnSendText" title="Send">➜</button>
+    </div>
+    <div class="interaction-hint">Press Enter to send · Hold Space for push-to-talk · Click avatar or talk anytime</div>
+  </footer>
+
+  <!-- Unified Drawer: Memory, Tasks, Leads -->
+  <aside class="drawer" id="sideDrawer">
+    <div class="drawer-head">
+      <div>
+        <span class="drawer-kicker">ASSISTANT CONTEXT</span>
+        <h3>Context & Workspace</h3>
+      </div>
+      <button class="close-btn" id="btnCloseDrawer">×</button>
+    </div>
+
+    <!-- Drawer Navigation Tabs -->
+    <div class="drawer-tabs">
+      <button class="tab-btn active" id="tabBtnMemories">Memories</button>
+      <button class="tab-btn" id="tabBtnTasks">Tasks</button>
+      <button class="tab-btn" id="tabBtnLeads">Leads & CRM</button>
+    </div>
+
+    <!-- Memories View -->
+    <div class="tab-content active" id="tabContentMemories">
+      <div class="section-row">
+        <h4>Remembered Context</h4>
+        <span class="badge" id="memoryCountBadge">0</span>
+      </div>
+      <div id="drawerMemoriesList" class="drawer-list"></div>
+    </div>
+
+    <!-- Tasks View -->
+    <div class="tab-content" id="tabContentTasks">
+      <div class="section-row">
+        <h4>Pending Tasks</h4>
+        <button class="text-btn" id="btnRefreshTasks">Refresh</button>
+      </div>
+      <div id="drawerTasksList" class="drawer-list"></div>
+    </div>
+
+    <!-- Leads View -->
+    <div class="tab-content" id="tabContentLeads">
+      <div class="section-row">
+        <h4>Prospects & CRM</h4>
+        <button class="text-btn" id="btnRefreshLeads">Refresh</button>
+      </div>
+      <div id="drawerLeadsList" class="drawer-list"></div>
+    </div>
+  </aside>
+
+  <!-- Human Confirmation Modal -->
+  <div class="modal" id="confirmationModal" style="display:none">
+    <div class="modal-card">
+      <div class="modal-kicker" id="confirmRiskBadge">CONFIRMATION</div>
+      <h3>Permission required</h3>
+      <p id="confirmDescription"></p>
+      <pre id="confirmDetails"></pre>
+      <div class="modal-actions">
+        <button class="secondary" id="btnRejectConfirm">Cancel</button>
+        <button class="primary" id="btnApproveConfirm">Approve & execute</button>
+      </div>
+    </div>
   </div>
-  <div class="interaction-hint">Enter to send · Space for push-to-talk · “Hey Sia” to wake</div>
-</footer>
 
-<aside class="drawer" id="memoryDrawer"><div class="drawer-head"><div><span class="drawer-kicker">LOCAL</span><h3>Memory & context</h3></div><button class="close-btn" id="btnCloseMemory">×</button></div><div id="drawerMemoriesList" class="drawer-list"></div><div class="drawer-section"><div class="section-row"><h4>Tasks</h4><button class="text-btn" id="btnRefreshTasks">Refresh</button></div><div id="drawerTasksList" class="drawer-list"></div></div></aside>
+  <!-- Real Settings Modal -->
+  <div class="modal" id="settingsModal" style="display:none">
+    <div class="modal-card wide">
+      <div class="drawer-head">
+        <div>
+          <div class="drawer-kicker">SYSTEM PREFERENCES</div>
+          <h3>Assistant Configuration</h3>
+        </div>
+        <button class="close-btn" id="btnCloseSettings">×</button>
+      </div>
 
-<div class="modal" id="confirmationModal" style="display:none"><div class="modal-card"><div class="modal-kicker" id="confirmRiskBadge">CONFIRMATION</div><h3>Permission required</h3><p id="confirmDescription"></p><pre id="confirmDetails"></pre><div class="modal-actions"><button class="secondary" id="btnRejectConfirm">Cancel</button><button class="primary" id="btnApproveConfirm">Approve & execute</button></div></div></div>
+      <div class="settings-grid">
+        <div class="field">
+          <label>Assistant Name</label>
+          <input id="settingAssistantName" placeholder="SIA">
+        </div>
+        <div class="field">
+          <label>Your Name</label>
+          <input id="settingUserName" placeholder="Sagar">
+        </div>
+        <div class="field">
+          <label>AI Provider Routing</label>
+          <select id="settingProvider">
+            <option value="hybrid">Hybrid (Gemini primary + Ollama fallback)</option>
+            <option value="gemini">Gemini Only</option>
+            <option value="local">Ollama Local Only</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Gemini Reasoning Model</label>
+          <input id="settingGeminiModel" placeholder="gemini-3.8-flash">
+        </div>
+        <div class="field">
+          <label>Ollama Local Model</label>
+          <input id="settingOllamaModel" placeholder="llama3.2">
+        </div>
+        <div class="field">
+          <label>Assistant Voice</label>
+          <select id="settingVoice">
+            <option value="Aoede">Aoede (Warm, Intelligent Female)</option>
+            <option value="Charon">Charon (Calm, Confident)</option>
+            <option value="Leda">Leda (Expressive Female)</option>
+            <option value="Despina">Despina (Crisp, Focused)</option>
+            <option value="Kore">Kore (Gentle, Natural)</option>
+            <option value="Puck">Puck (Playful, Crisp)</option>
+            <option value="Achernar">Achernar (Deep, Authoritative)</option>
+          </select>
+        </div>
+        <div class="field full-width">
+          <label>Gemini API Key</label>
+          <input id="settingGeminiKey" type="password" placeholder="Stored safely in local secrets only">
+        </div>
+      </div>
 
-<div class="modal" id="settingsModal" style="display:none"><div class="modal-card wide"><div class="drawer-head"><div><div class="drawer-kicker">SYSTEM</div><h3>Assistant settings</h3></div><button class="close-btn" id="btnCloseSettings">×</button></div>
-<div class="settings-grid">
-<div class="field"><label>Assistant name</label><input id="settingAssistantName"></div><div class="field"><label>Your name</label><input id="settingUserName"></div>
-<div class="field"><label>AI mode</label><select id="settingProvider"><option value="hybrid">Hybrid — Gemini + local Ollama</option><option value="gemini">Gemini first</option><option value="local">Local Ollama</option></select></div>
-<div class="field"><label>Reasoning model</label><input id="settingGeminiModel"></div>
-<div class="field"><label>Voice</label><select id="settingVoice"><option>Charon</option><option>Aoede</option><option>Leda</option><option>Achernar</option><option>Despina</option><option>Kore</option><option>Puck</option><option>Erinome</option><option>Callirrhoe</option><option>Vindemiatrix</option></select></div>
-<div class="field"><label>Gemini API key</label><input id="settingGeminiKey" type="password" placeholder="Stored only in local_secrets.json"></div>
+      <div class="quota-note">
+        <b>Hybrid Architecture:</b> If Gemini API rate limits or quota are reached, SIA automatically fails over to your local Ollama model to ensure continuous zero-cost desktop operation.
+        <div id="geminiStatusText" style="margin-top: 4px; color: var(--accent);">Checking key…</div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary" id="btnTestVoice">Test Voice</button>
+        <button class="primary" id="btnSaveSettings">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <audio id="siaAudioPlayer"></audio>
+
+  <!-- Scripts in Proper Order -->
+  <script src="/src/three.min.js"></script>
+  <script src="/src/face-model-data.js"></script>
+  <script src="/src/api-client.js"></script>
+  <script src="/src/avatar-hud.js"></script>
+  <script src="/src/voice-controller.js"></script>
+  <script src="/src/chat-manager.js"></script>
+  <script src="/src/app.js"></script>
 </div>
-<div class="quota-note"><b>Gemini Free Tier is limited, not unlimited.</b> Hybrid mode keeps SIA usable through your local Ollama model when cloud quota/rate limits are hit. Gemini Live/TTS also use quota. <span id="geminiStatusText">Checking key…</span></div>
-<div class="modal-actions"><button class="secondary" id="btnTestVoice">Test voice</button><button class="primary" id="btnSaveSettings">Save settings</button></div></div></div>
-
-<audio id="siaAudioPlayer"></audio>
-<script src="/src/api-client.js"></script><script src="/src/avatar-hud.js"></script><script src="/src/voice-controller.js"></script><script src="/src/chat-manager.js"></script><script src="/src/app.js"></script>
-</div></body></html>
+</body>
+</html>

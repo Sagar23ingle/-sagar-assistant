@@ -40,7 +40,7 @@ class LeadItem(BaseModel):
     business_name: str
     website: Optional[str] = ""
     contact: Optional[str] = ""
-    location: Optional[str] = "Nagpur"
+    location: Optional[str] = ""
     issues: Optional[str] = ""
     pitch_angle: Optional[str] = ""
     status: str = Field(default="new", description="new, analyzed, drafted, contacted, closed")

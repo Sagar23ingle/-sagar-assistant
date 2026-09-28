@@ -72,14 +72,14 @@ async def init_db() -> None:
             )
         """)
 
-        # 5. Leads table (DineMotion client discovery & outreach)
+        # 5. Leads table (Client discovery & outreach)
         await db.execute("""
             CREATE TABLE IF NOT EXISTS leads (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 business_name TEXT NOT NULL,
                 website TEXT,
                 contact TEXT,
-                location TEXT DEFAULT 'Nagpur',
+                location TEXT DEFAULT '',
                 issues TEXT,
                 pitch_angle TEXT,
                 status TEXT DEFAULT 'new',
@@ -116,9 +116,6 @@ async def seed_initial_context(db: aiosqlite.Connection) -> None:
     initial_memories = [
         ("personal", "user_name", "Sagar", 5),
         ("personal", "allowed_addressing", "Sir or Sagar only. Never use bro, boss, dude, buddy, or bhai.", 5),
-        ("personal", "city", "Nagpur, India", 4),
-        ("projects", "DineMotion Studios", "Web design and digital agency focused on high-end restaurant websites and client acquisition.", 5),
-        ("projects", "TransCore", "Core technology and logistics / core system initiative.", 4),
         ("preferences", "assistant_persona", "Intelligent, calm, female, witty, honest, direct, never blindly agrees.", 5),
         ("preferences", "language_preferences", "Supports English, Hindi, Marathi, and natural Hinglish.", 4),
     ]
@@ -128,12 +125,6 @@ async def seed_initial_context(db: aiosqlite.Connection) -> None:
             "INSERT OR IGNORE INTO memories (category, key, value, importance, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)",
             (cat, key, val, imp, now, now),
         )
-
-    # Seed projects
-    await db.execute("INSERT OR IGNORE INTO projects (name, description, status) VALUES (?, ?, ?)",
-                     ("DineMotion Studios", "Restaurant website redesign & digital presence agency in Nagpur.", "active"))
-    await db.execute("INSERT OR IGNORE INTO projects (name, description, status) VALUES (?, ?, ?)",
-                     ("TransCore", "Core technological infrastructure project.", "active"))
 
     await db.commit()
 
@@ -268,8 +259,8 @@ async def update_task(task_id: int, status: Optional[str] = None, title: Optiona
 
 # ==================== LEAD OPERATIONS ====================
 
-async def add_lead(business_name: str, website: str = "", contact: str = "", location: str = "Nagpur", issues: str = "", pitch_angle: str = "") -> Dict[str, Any]:
-    """Add a discovered client lead for DineMotion."""
+async def add_lead(business_name: str, website: str = "", contact: str = "", location: str = "", issues: str = "", pitch_angle: str = "") -> Dict[str, Any]:
+    """Add a discovered client lead for the user."""
     now = datetime.now().isoformat()
     async with get_db_connection() as db:
         cursor = await db.execute(

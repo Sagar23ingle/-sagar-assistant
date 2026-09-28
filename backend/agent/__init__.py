@@ -10,9 +10,7 @@ from .personality import (
     detect_language,
     sanitize_sia_response,
     build_system_prompt,
-    SIA_SYSTEM_PROMPT,
 )
-
 __all__ = [
     "conversation_manager",
     "ConversationManager",
